@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const { checkForAuthentication } = require("./middlewares/auth.middlewares.js");
 const userRouter = require("./routes/user.routes.js");
 const gatepassRouter = require("./routes/gatepass.routes.js");
+const complaintsRouter = require("./routes/complaints.routes.js");
 
 const app = express();
 const port = process.env.PORT;
@@ -26,6 +27,8 @@ app.use(express.static(path.resolve("./public")));
 
 app.use("/user", userRouter);
 app.use("/gatepass", gatepassRouter);
+app.use("/complaints", complaintsRouter);
+
 
 app.listen(port, () => {
   console.log(`Server Started At ${port}`);

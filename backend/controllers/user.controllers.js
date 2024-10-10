@@ -80,4 +80,10 @@ async function profileImageHandler(req, res) {
   }
 }
 
-module.exports = { userSignup, userLogin, getUser, userUpdate,profileImageHandler };
+module.exports = {
+  userSignup,
+  userLogin,
+  getUser,
+  userUpdate,
+  profileImageHandler,
+};
