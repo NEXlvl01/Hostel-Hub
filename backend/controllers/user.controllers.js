@@ -31,9 +31,9 @@ async function userLogin(req, res) {
     const token = await User.matchPassword(email, pass);
     const user = validateToken(token);
     res.cookie("token", token, {
-      httpOnly: true,   
-      secure: true,  
-      sameSite: "None",  
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict", 
     });
     
     return res
