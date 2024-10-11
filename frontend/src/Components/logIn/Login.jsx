@@ -26,7 +26,7 @@ export default function Login() {
     event.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/login",
+        "https://hostel-hub-bl3q.onrender.com/user/login",
         loginData
       );
       toast.success(response.data.message);

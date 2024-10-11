@@ -6,7 +6,7 @@ export default function ComplaintHistory({ setShowForm }) {
   const [complaints,setComplaints] = useState([]);
 
   async function getComplaints() {
-    const response = await axios.get("http://localhost:8000/complaints/getByUser");
+    const response = await axios.get("https://hostel-hub-bl3q.onrender.com/complaints/getByUser");
     setComplaints(response.data.allComplaints);
   }
 

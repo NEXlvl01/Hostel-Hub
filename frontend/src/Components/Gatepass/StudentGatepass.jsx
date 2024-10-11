@@ -72,7 +72,7 @@ export default function StudentGatepass() {
     if (!token) {
       return;
     }
-    const response = await axios.get("http://localhost:8000/user/getUser");
+    const response = await axios.get("https://hostel-hub-bl3q.onrender.com/user/getUser");
     setUser(response.data.user);
   }
 
@@ -82,7 +82,7 @@ export default function StudentGatepass() {
   const [editButton, setEditButton] = useState(false);
 
   async function getData() {
-    const response = await axios.get("http://localhost:8000/gatepass/all");
+    const response = await axios.get("https://hostel-hub-bl3q.onrender.com/gatepass/all");
     setGatepasses(response.data.gatepasses);
   }
 
@@ -121,10 +121,10 @@ export default function StudentGatepass() {
     try {
       console.log(gatePassData.name);
       const response = editButton ? (await axios.patch(
-        "http://localhost:8000/gatepass/apply",
+        "https://hostel-hub-bl3q.onrender.com/gatepass/apply",
         gatePassData
       )) : (await axios.post(
-        "http://localhost:8000/gatepass/apply",
+        "https://hostel-hub-bl3q.onrender.com/gatepass/apply",
         gatePassData
       ));
       toast.success(response.data.message);

@@ -27,7 +27,7 @@ export default function RaiseComplaint({ setShowForm, name, hostel }) {
     async function submitHandler(e) {
         e.preventDefault();
        try {
-        const response = await axios.post("http://localhost:8000/complaints/raise",complaintData);
+        const response = await axios.post("https://hostel-hub-bl3q.onrender.com/complaints/raise",complaintData);
         toast.success(response.data.message);
        } catch (error) {
         console.log(error);

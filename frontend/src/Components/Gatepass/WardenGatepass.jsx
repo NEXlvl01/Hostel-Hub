@@ -14,13 +14,13 @@ export default function WardenGatepass() {
     if (!token) {
       return;
     }
-    const response = await axios.get("http://localhost:8000/user/getUser");
+    const response = await axios.get("https://hostel-hub-bl3q.onrender.com/user/getUser");
     setUser(response.data.user);
   }
 
   async function getData() {
     const hostel = user?.hostel;
-    const response = await axios.get(`http://localhost:8000/gatepass/warden/gatepass/${hostel}`);
+    const response = await axios.get(`https://hostel-hub-bl3q.onrender.com/gatepass/warden/gatepass/${hostel}`);
     setGatePasses(response.data.gatepasses);
   }
 
@@ -32,7 +32,7 @@ export default function WardenGatepass() {
   useEffect(() => {
     const fetchGatepasses = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/gatepass/search?search=${search}`);
+        const response = await axios.get(`https://hostel-hub-bl3q.onrender.com/gatepass/search?search=${search}`);
         setGatePasses(response.data.gatepasses);
       } catch (error) {
         console.error(error);
@@ -44,7 +44,7 @@ export default function WardenGatepass() {
 
   const handleApprove = async (gatepassId) => {
     try {
-      const response = await axios.put(`http://localhost:8000/gatepass/warden/approve/${gatepassId}`);
+      const response = await axios.put(`https://hostel-hub-bl3q.onrender.com/gatepass/warden/approve/${gatepassId}`);
       toast.success(response.data.message);
       getData();
     } catch (error) {
@@ -54,7 +54,7 @@ export default function WardenGatepass() {
 
   const handleReject = async (gatepassId) => {
     try {
-      const response = await axios.put(`http://localhost:8000/gatepass/warden/reject/${gatepassId}`);
+      const response = await axios.put(`https://hostel-hub-bl3q.onrender.com/gatepass/warden/reject/${gatepassId}`);
       toast.success(response.data.message);
       getData();
     } catch (error) {

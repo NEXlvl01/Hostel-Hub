@@ -15,7 +15,7 @@ export default function Navbar() {
     if (!token) {
       return;
     }
-    const response = await axios.get("http://localhost:8000/user/getUser");
+    const response = await axios.get("https://hostel-hub-bl3q.onrender.com/user/getUser");
     setUser(response.data.user);
   }
 

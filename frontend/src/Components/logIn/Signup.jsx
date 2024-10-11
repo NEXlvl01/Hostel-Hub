@@ -33,7 +33,7 @@ export default function Signup() {
     event.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/signup",
+        "https://hostel-hub-bl3q.onrender.com/user/signup",
         signupData
       );
       toast.success(response.data.message);

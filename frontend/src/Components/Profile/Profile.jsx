@@ -17,7 +17,7 @@ export default function Profile() {
         if (!token) {
             return;
         }
-        const response = await axios.get("http://localhost:8000/user/getUser");
+        const response = await axios.get("https://hostel-hub-bl3q.onrender.com/user/getUser");
         setUser(response.data.user);
         setTemp(response.data.user);
     }
@@ -30,7 +30,7 @@ export default function Profile() {
     async function submitHandler(e) {
         e.preventDefault();
         try {
-            const response = await axios.put("http://localhost:8000/user/update", temp);
+            const response = await axios.put("https://hostel-hub-bl3q.onrender.com/user/update", temp);
             setEditMode(false);
             getUser();
             toast.success(response.data.message);
@@ -48,7 +48,7 @@ export default function Profile() {
             formData.append('profileImage', file);
 
             await toast.promise(
-                axios.post('http://localhost:8000/user/profileImage', formData, {
+                axios.post('https://hostel-hub-bl3q.onrender.com/user/profileImage', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
