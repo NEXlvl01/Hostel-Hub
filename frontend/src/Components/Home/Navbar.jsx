@@ -12,10 +12,12 @@ export default function Navbar() {
 
   async function getUser() {
     const token = Cookies.get("token");
+    console.log(token);
     if (!token) {
       return;
     }
     const response = await axios.get("https://hostel-hub-bl3q.onrender.com/user/getUser");
+    console.log(response.data.user);
     setUser(response.data.user);
   }
 

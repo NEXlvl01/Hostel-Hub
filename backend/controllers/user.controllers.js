@@ -32,7 +32,7 @@ async function userLogin(req, res) {
     const user = validateToken(token);
     res.cookie("token", token, {
       httpOnly: true,   
-      secure: process.env.NODE_ENV === "production",  
+      secure: false,  
       sameSite: "None",  
     });
     
