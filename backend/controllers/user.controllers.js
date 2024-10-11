@@ -30,7 +30,12 @@ async function userLogin(req, res) {
   try {
     const token = await User.matchPassword(email, pass);
     const user = validateToken(token);
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,   
+      secure: process.env.NODE_ENV === "production",  
+      sameSite: "None",  
+    });
+    
     return res
       .status(200)
       .json({ message: "User Logged In Successfully", user });

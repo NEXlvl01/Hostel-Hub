@@ -27,7 +27,7 @@ export default function Login() {
     try {
       const response = await axios.post(
         "https://hostel-hub-bl3q.onrender.com/user/login",
-        loginData
+        loginData,{withCredentials: true,}
       );
       toast.success(response.data.message);
       localStorage.setItem("User", JSON.stringify(response.data.user));

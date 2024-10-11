@@ -20,8 +20,10 @@ app.use(
     origin: "http://localhost:3000",  
     credentials: true,  
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(cookieParser());
 app.use(checkForAuthentication);
 app.use(express.static(path.resolve("./public")));
