@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://hostelhub01.netlify.app"], 
+    origin: ["http://localhost:3000", "https://hostelhub01.netlify.app", "https://hostel-hub-bl3q.onrender.com"], 
     credentials: true,  
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
