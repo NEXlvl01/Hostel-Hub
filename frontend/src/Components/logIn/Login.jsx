@@ -10,7 +10,7 @@ axios.defaults.withCredentials = true;
 export default function Login() {
   const [loginData, setLoginData] = useState({ email: "", pass: "" });
   const navigate = useNavigate();
-  const { setUser, setIsAuthenticated } = useContext(AppContext);
+  const {setIsAuthenticated } = useContext(AppContext);
 
   function changeHandler(event) {
     event.preventDefault();
@@ -31,7 +31,6 @@ export default function Login() {
       );
       toast.success(response.data.message);
       localStorage.setItem("token", response.data.token);
-      setUser(response.data.user);
       setIsAuthenticated(true);
       navigate("/");
     } catch (error) {

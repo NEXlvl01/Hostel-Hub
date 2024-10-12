@@ -65,16 +65,17 @@ async function profileImageHandler(req, res) {
     const file = req.file;
     const userId = req.user.id;
 
-    const result = await uploadOnCloudinary(file.path);
+    const result = await uploadOnCloudinary(file.buffer);
 
     await User.findByIdAndUpdate(userId, {
       profileImageURL: result.secure_url,
     });
 
-    return res
-      .status(200)
-      .json({ message: "Profile Picture Updated Successfully" });
+    return res.status(200).json({
+      message: "Profile Picture Updated Successfully",
+    });
   } catch (error) {
+    console.error("Error uploading profile picture: ", error);
     res.status(500).json({ message: "Error Uploading Profile Picture" });
   }
 }

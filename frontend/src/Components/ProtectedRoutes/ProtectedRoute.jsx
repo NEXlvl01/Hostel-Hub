@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import axios from 'axios';
+import { AppContext } from '../../Context/AppContext';
+import axios from '../../axiosConfig.js';
+
 const ProtectedRoute = ({ component: Component, allowedRoles }) => {
+  const { isAuthenticated } = useContext(AppContext);
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      axios.get('/user/getUser ')
-        .then(response => {
-          setUser(response.data.user);
-          setIsAuthenticated(true);
-        })
-        .catch(error => {
-          localStorage.removeItem('token');
-          setIsAuthenticated(false);
-        });
-    } else {
-      setIsAuthenticated(false);
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get('/user/getUser  ');
+        setUser(response.data.user);
+      } catch (error) {
+        console.log("Error fetching user:", error);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchUser();
     }
   }, []);
+
 
   if (!isAuthenticated || (user && !allowedRoles.includes(user?.role))) {
     return <Navigate to="/login" />;

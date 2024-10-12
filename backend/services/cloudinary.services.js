@@ -1,5 +1,4 @@
 const cloudinary = require('cloudinary').v2;
-const fs = require('fs');
 
 cloudinary.config({ 
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
@@ -7,22 +6,27 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const uploadOnCloudinary = async (localFilePath) => {
+const uploadOnCloudinary = async (fileBuffer) => {
     try {
-        if(!localFilePath) return null;
+        if (!fileBuffer) return null;
 
-        const response = await cloudinary.uploader.upload(localFilePath, {
-            resource_type:'auto'
-        })
+        const response = await cloudinary.uploader.upload_stream(
+            { resource_type: 'auto' },
+            (error, result) => {
+                if (error) throw new Error(error);
+                console.log("File has been successfully uploaded", result.url);
+                return result;
+            }
+        );
 
-        console.log("File has been successfully uploaded ",response.url);
-        fs.unlinkSync(localFilePath);
-        return response;
-    }
-    catch {
-        fs.unlinkSync(localFilePath); 
+        const stream = require('stream');
+        const readableStream = new stream.PassThrough();
+        readableStream.end(fileBuffer);
+        readableStream.pipe(response);
+    } catch (error) {
+        console.error("Error uploading file to Cloudinary", error);
         return null;
     }
-}
+};
 
-module.exports = {uploadOnCloudinary};
+module.exports = { uploadOnCloudinary };
