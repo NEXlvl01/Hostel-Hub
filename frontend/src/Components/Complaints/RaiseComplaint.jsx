@@ -29,6 +29,7 @@ export default function RaiseComplaint({ setShowForm, name, hostel }) {
         try {
           const response = await axios.post('/complaints/raise', complaintData);
           toast.success(response.data.message);
+          setShowForm(false);
         } catch (error) {
           console.log(error);
           toast.error("Error occured while registering the complaint");

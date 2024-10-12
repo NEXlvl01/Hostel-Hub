@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../../axiosConfig.js';
 import toast from "react-hot-toast";
+import { ScaleLoader } from 'react-spinners';
 
 
 export default function WardenGatepass() {
   const [gatePasses, setGatePasses] = useState([]);
   const [search, setSearch] = useState('');
-
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({});
 
   async function getUser() {
@@ -20,30 +21,37 @@ export default function WardenGatepass() {
 
   async function getData() {
     const hostel = user?.hostel;
+    setLoading(true);
     try {
       const response = await axios.get(`/gatepass/warden/gatepass/${hostel}`);
       setGatePasses(response.data.gatepasses);
     } catch (error) {
       console.log("Error ", error);
+    } finally {
+      setLoading(false); 
     }
   }
 
   useEffect(() => {
-    try {
-      getData();
-      getUser();
-    } catch (error) {
-      console.log("Error ", error);
-    }
-  }, [])
+    getUser ();
+  }, []);
+
+  useEffect(() => {
+    getData();
+  }, [user])
 
   useEffect(() => {
     const fetchGatepasses = async () => {
-      try {
-        const response = await axios.get(`/gatepass/search?search=${search}`);
-        setGatePasses(response.data.gatepasses);
-      } catch (error) {
-        console.error(error);
+      if (search) {
+        setLoading(true); 
+        try {
+          const response = await axios.get(`/gatepass/search?search=${search}`);
+          setGatePasses(response.data.gatepasses);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoading(false); 
+        }
       }
     };
     fetchGatepasses();
@@ -128,29 +136,39 @@ export default function WardenGatepass() {
 
           <div className='flex flex-col gap-3 h-[50vh] overflow-y-scroll py-2'>
             {
-              gatePasses.length === 0 ? (<div className='h-full w-full flex justify-center items-center'><div className='text-[#DC851F] text-2xl font-semibold'>No Gatepasses Yet</div></div>) :
-
-                gatePasses.map((gatepass) => (
-                  <div className='p-3 w-full rounded-xl shadow-xl border-2 border-[#343330] flex justify-between'>
-                    <div className='font-semibold flex flex-col gap-1 text-xm'>
-                      <h1 className='text-xl'><span className='text-[#DC851F]'>Name - </span>{gatepass.name}</h1>
-                      <div><span className='text-[#DC851F]'>Leave Type  -  </span>{gatepass.leaveType}</div>
-                      <div><span className='text-[#DC851F]'>Out Date  -  </span>{new Date(gatepass.outDate).toLocaleDateString('en-GB')}</div>
-                      <div>
-                        {
-                          gatepass.inDate ? (<div><span className='text-[#DC851F]'>In Date - </span>{new Date(gatepass.inDate).toLocaleDateString('en-GB')}</div>) : (null)
-                        }
-                      </div>
-                      <div><span className='text-[#DC851F]'>Out Time - </span>{gatepass.outTime}</div>
-                      <div><span className='text-[#DC851F]'>In Time - </span>{gatepass.inTime}</div>
-                      <div><span className='text-[#DC851F]'>Reason - </span>{gatepass.reason}</div>
-                    </div>
-                    <div className='w-[20%] flex flex-col items-center justify-center gap-4'>
-                      <button className='w-full py-2 rounded-md font-semibold bg-[#4caf50] text-white hover:bg-[#37c93c] transition-all duration-200' onClick={() => handleApprove(gatepass._id)}>Approve</button>
-                      <button className='w-full py-2 rounded-md font-semibold bg-[#f44336] text-white hover:bg-[#c22e23] transition-all duration-200' onClick={() => handleReject(gatepass._id)}>Reject</button>
-                    </div>
+              loading ? (
+                <div className='h-full w-full flex justify-center items-center'>
+                  <ScaleLoader color="#DC851F" size={100} />
+                </div>
+              ) : (
+                gatePasses.length === 0 ? (
+                  <div className='h-full w-full flex justify-center items-center'>
+                    <div className='text-[#DC851F] text-2xl font-semibold'>No Gatepasses Yet</div>
                   </div>
-                ))
+                ) : (
+                  gatePasses.map((gatepass) => (
+                    <div className='p-3 w-full rounded-xl shadow-xl border-2 border-[#343330] flex justify-between'>
+                      <div className='font-semibold flex flex-col gap-1 text-xm'>
+                        <h1 className='text-xl'><span className='text-[#DC851F]'>Name - </span>{gatepass.name}</h1>
+                        <div><span className='text-[#DC851F]'>Leave Type  -  </span>{gatepass.leaveType}</div>
+                        <div><span className='text-[#DC851F]'>Out Date  -  </span>{new Date(gatepass.outDate).toLocaleDateString('en-GB')}</div>
+                        <div>
+                          {
+                            gatepass.inDate ? (<div><span className='text-[#DC851F]'>In Date - </span>{new Date(gatepass.inDate).toLocaleDateString('en-GB')}</div>) : (null)
+                          }
+                        </div>
+                        <div><span className='text-[#DC851F]'>Out Time - </span>{gatepass.outTime}</div>
+                        <div><span className='text-[#DC851F]'>In Time - </span>{gatepass.inTime}</div>
+                        <div><span className='text-[#DC851F]'>Reason - </span>{gatepass.reason}</div>
+                      </div>
+                      <div className='w-[20%] flex flex-col items-center justify-center gap-4'>
+                        <button className='w-full py-2 rounded-md font-semibold bg-[#4caf50] text-white hover:bg-[#37c93c] transition-all duration-200' onClick={() => handleApprove(gatepass._id)}>Approve</button>
+                        <button className='w-full py-2 rounded-md font-semibold bg-[#f44336] text-white hover:bg-[#c22e23] transition-all duration-200' onClick={() => handleReject(gatepass._id)}>Reject</button>
+                      </div>
+                    </div>
+                  ))
+                )
+              )
             }
           </div>
         </div>

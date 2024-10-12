@@ -30,7 +30,7 @@ export default function ComplaintHistory({ setShowForm }) {
         </button>
       </div>
 
-      <div className='h-[51vh] overflow-y-scroll'>
+      <div className='max-h-[51vh] overflow-y-scroll'>
 
         {
           complaints.map((complaint) => (
