@@ -4,6 +4,28 @@ import toast from 'react-hot-toast';
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 
+// Set the base URL for API requests
+axios.defaults.baseURL = 'https://hostel-hub-bl3q.onrender.com';
+
+// Set the Authorization header with the Bearer token
+axios.interceptors.push({
+    request: (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    response: (response) => {
+        if (response.status === 401) {
+            // Token has expired, prompt user to log in again
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+        return response;
+    },
+});
+
 export default function Profile() {
 
     const [user, setUser] = useState({});
@@ -13,13 +35,13 @@ export default function Profile() {
     const navigate = useNavigate();
 
     async function getUser() {
-        const token = Cookies.get("token");
-        if (!token) {
-            return;
+        try {
+            const response = await axios.get('/user/getUser ');
+            setUser(response.data.user);
+            setTemp(response.data.user);
+        } catch (error) {
+            console.log("Error ", error);
         }
-        const response = await axios.get("https://hostel-hub-bl3q.onrender.com/user/getUser");
-        setUser(response.data.user);
-        setTemp(response.data.user);
     }
 
     function changeHandler(e) {
@@ -30,7 +52,7 @@ export default function Profile() {
     async function submitHandler(e) {
         e.preventDefault();
         try {
-            const response = await axios.put("https://hostel-hub-bl3q.onrender.com/user/update", temp);
+            const response = await axios.put('/user/update', temp);
             setEditMode(false);
             getUser();
             toast.success(response.data.message);
@@ -48,7 +70,7 @@ export default function Profile() {
             formData.append('profileImage', file);
 
             await toast.promise(
-                axios.post('https://hostel-hub-bl3q.onrender.com/user/profileImage', formData, {
+                axios.post('/user/profileImage', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -72,11 +94,10 @@ export default function Profile() {
             <span className='flex gap-2 items-center'>
                 <b className='text-[#343330] text-xl'>Are You Sure?</b>
                 <button onClick={() => {
-                    Cookies.remove("token");
-                    localStorage.removeItem("User");
+                    localStorage.removeItem('token');
                     navigate("/login");
                     toast.dismiss(t.id);
-                    toast.success("User Logged Out");
+                    toast.success("User  Logged Out");
                 }} className='text-white bg-[#DC851F] py-2 rounded-lg font-semibold hover:bg-[#eea756] transition-all duration-200 w-[100px]'>
                     Log Out
                 </button>

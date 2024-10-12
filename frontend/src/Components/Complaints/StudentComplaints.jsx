@@ -6,6 +6,27 @@ import Cookies from "js-cookie";
 import RaiseComplaint from './RaiseComplaint';
 import ComplaintHistory from './ComplaintHistory';
 
+axios.defaults.baseURL = 'https://hostel-hub-bl3q.onrender.com';
+
+// Set the Authorization header with the Bearer token
+axios.interceptors.push({
+    request: (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    response: (response) => {
+        if (response.status === 401) {
+            // Token has expired, prompt user to log in again
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+        return response;
+    },
+});
+
 
 export default function StudentComplaints() {
 
@@ -13,23 +34,19 @@ export default function StudentComplaints() {
     const [showForm, setShowForm] = useState(true);
 
     async function getUser() {
-        const token = Cookies.get("token");
-        if (!token) {
-            return;
-        }
-        const response = await axios.get("https://hostel-hub-bl3q.onrender.com/user/getUser");
-        setUser(response.data.user);
-    }
-
-    useEffect(() => {
         try {
-            getUser();
+            const response = await axios.get('/user/getUser');
+            setUser(response.data.user);
         } catch (error) {
             console.log("Error ", error);
         }
+    }
+
+    useEffect(() => {
+        getUser();
     }, []);
 
-    
+
 
     return (
         <div className="bg-neutral-100 min-h-[88vh]">
@@ -53,7 +70,7 @@ export default function StudentComplaints() {
 
                 <div className='w-[80%] rounded-2xl shadow-2xl border-2 bg-white py-3 px-4'>
                     {
-                        showForm ? (<RaiseComplaint setShowForm={setShowForm} name = {user?.fullName} hostel = {user?.hostel}/>) : (<ComplaintHistory setShowForm={setShowForm} />)
+                        showForm ? (<RaiseComplaint setShowForm={setShowForm} name={user?.fullName} hostel={user?.hostel} />) : (<ComplaintHistory setShowForm={setShowForm} />)
                     }
                 </div>
             </div>

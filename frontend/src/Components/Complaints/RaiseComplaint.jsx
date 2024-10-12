@@ -2,6 +2,28 @@ import axios from 'axios';
 import React, { useState,useEffect } from 'react';
 import toast from 'react-hot-toast';
 
+// Set the base URL for API requests
+axios.defaults.baseURL = 'https://hostel-hub-bl3q.onrender.com';
+
+// Set the Authorization header with the Bearer token
+axios.interceptors.push({
+  request: (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  response: (response) => {
+    if (response.status === 401) {
+      // Token has expired, prompt user to log in again
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return response;
+  },
+});
+
 export default function RaiseComplaint({ setShowForm, name, hostel }) {
 
     const [complaintData, setComplaintData] = useState({ name: "", hostel: "", compType: "Furniture", compDetails: "" });
@@ -26,14 +48,14 @@ export default function RaiseComplaint({ setShowForm, name, hostel }) {
 
     async function submitHandler(e) {
         e.preventDefault();
-       try {
-        const response = await axios.post("https://hostel-hub-bl3q.onrender.com/complaints/raise",complaintData);
-        toast.success(response.data.message);
-       } catch (error) {
-        console.log(error);
-        toast.error("Error occured while registering the complaint");
-       }
-    }
+        try {
+          const response = await axios.post('/complaints/raise', complaintData);
+          toast.success(response.data.message);
+        } catch (error) {
+          console.log(error);
+          toast.error("Error occured while registering the complaint");
+        }
+      }
 
     return (
         <div className="flex flex-col gap-7 py-2">

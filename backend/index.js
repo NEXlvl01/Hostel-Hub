@@ -12,7 +12,6 @@ const complaintsRouter = require("./routes/complaints.routes.js");
 const app = express();
 const port = process.env.PORT;
 dbConnect();
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(

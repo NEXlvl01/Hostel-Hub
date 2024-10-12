@@ -6,23 +6,47 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import "./Navbar.css";
 
+// Set the base URL for API requests
+axios.defaults.baseURL = 'https://hostel-hub-bl3q.onrender.com';
+
+// Set the Authorization header with the Bearer token
+axios.interceptors.push({
+  request: (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  response: (response) => {
+    if (response.status === 401) {
+      // Token has expired, prompt user to log in again
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return response;
+  },
+});
+
 export default function Navbar() {
 
   const [user, setUser] = useState({});
 
   async function getUser() {
-    const token = Cookies.get("token");
-    console.log(token);
-    if (!token) {
-      return;
+    try {
+      const response = await axios.get('/user/getUser ');
+      setUser(response.data.user);
+    } catch (error) {
+      console.log("Error ", error);
     }
-    const response = await axios.get("https://hostel-hub-bl3q.onrender.com/user/getUser");
-    console.log(response.data.user);
-    setUser(response.data.user);
   }
 
   useEffect(() => {
-    getUser();
+    try {
+      getUser();
+    } catch (error) {
+      console.log("Error ", error);
+    }
   }, []);
 
   return (

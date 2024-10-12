@@ -52,6 +52,28 @@ function addOneDay(dateString) {
   return `${year}-${month}-${day}`;
 }
 
+// Set the base URL for API requests
+axios.defaults.baseURL = 'https://hostel-hub-bl3q.onrender.com';
+
+// Set the Authorization header with the Bearer token
+axios.interceptors.push({
+  request: (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  response: (response) => {
+    if (response.status === 401) {
+      // Token has expired, prompt user to log in again
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return response;
+  },
+});
+
 export default function StudentGatepass() {
 
   const [user, setUser] = useState({});
@@ -68,12 +90,12 @@ export default function StudentGatepass() {
   });
 
   async function getUser() {
-    const token = Cookies.get("token");
-    if (!token) {
-      return;
+    try {
+      const response = await axios.get('/user/getUser');
+      setUser(response.data.user);
+    } catch (error) {
+      console.log("Error ", error);
     }
-    const response = await axios.get("https://hostel-hub-bl3q.onrender.com/user/getUser");
-    setUser(response.data.user);
   }
 
   const [applyForm, setApplyForm] = useState(true);
@@ -82,8 +104,12 @@ export default function StudentGatepass() {
   const [editButton, setEditButton] = useState(false);
 
   async function getData() {
-    const response = await axios.get("https://hostel-hub-bl3q.onrender.com/gatepass/all");
-    setGatepasses(response.data.gatepasses);
+    try {
+      const response = await axios.get('/gatepass/all');
+      setGatepasses(response.data.gatepasses);
+    } catch (error) {
+      console.log("Error ", error);
+    }
   }
 
   useEffect(() => {
@@ -121,10 +147,10 @@ export default function StudentGatepass() {
     try {
       console.log(gatePassData.name);
       const response = editButton ? (await axios.patch(
-        "https://hostel-hub-bl3q.onrender.com/gatepass/apply",
+        '/gatepass/apply',
         gatePassData
       )) : (await axios.post(
-        "https://hostel-hub-bl3q.onrender.com/gatepass/apply",
+        '/gatepass/apply',
         gatePassData
       ));
       toast.success(response.data.message);

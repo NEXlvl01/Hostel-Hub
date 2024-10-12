@@ -1,13 +1,38 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
+axios.defaults.baseURL = 'https://hostel-hub-bl3q.onrender.com';
+
+// Set the Authorization header with the Bearer token
+axios.interceptors.push({
+  request: (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  response: (response) => {
+    if (response.status === 401) {
+      // Token has expired, prompt user to log in again
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return response;
+  },
+});
+
 export default function ComplaintHistory({ setShowForm }) {
 
   const [complaints,setComplaints] = useState([]);
 
   async function getComplaints() {
-    const response = await axios.get("https://hostel-hub-bl3q.onrender.com/complaints/getByUser");
-    setComplaints(response.data.allComplaints);
+    try {
+      const response = await axios.get('/complaints/getByUser');
+      setComplaints(response.data.allComplaints);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   useEffect(() => {

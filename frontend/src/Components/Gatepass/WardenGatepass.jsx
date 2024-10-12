@@ -3,6 +3,28 @@ import axios from 'axios';
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 
+// Set the base URL for API requests
+axios.defaults.baseURL = 'https://hostel-hub-bl3q.onrender.com';
+
+// Set the Authorization header with the Bearer token
+axios.interceptors.push({
+  request: (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  response: (response) => {
+    if (response.status === 401) {
+      // Token has expired, prompt user to log in again
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return response;
+  },
+});
+
 export default function WardenGatepass() {
   const [gatePasses, setGatePasses] = useState([]);
   const [search, setSearch] = useState('');
@@ -10,29 +32,37 @@ export default function WardenGatepass() {
   const [user, setUser] = useState({});
 
   async function getUser() {
-    const token = Cookies.get("token");
-    if (!token) {
-      return;
+    try {
+      const response = await axios.get('/user/getUser ');
+      setUser(response.data.user);
+    } catch (error) {
+      console.log("Error ", error);
     }
-    const response = await axios.get("https://hostel-hub-bl3q.onrender.com/user/getUser");
-    setUser(response.data.user);
   }
 
   async function getData() {
     const hostel = user?.hostel;
-    const response = await axios.get(`https://hostel-hub-bl3q.onrender.com/gatepass/warden/gatepass/${hostel}`);
-    setGatePasses(response.data.gatepasses);
+    try {
+      const response = await axios.get(`/gatepass/warden/gatepass/${hostel}`);
+      setGatePasses(response.data.gatepasses);
+    } catch (error) {
+      console.log("Error ", error);
+    }
   }
 
   useEffect(() => {
-    getData();
-    getUser();
+    try {
+      getData();
+      getUser();
+    } catch (error) {
+      console.log("Error ", error);
+    }
   }, [])
 
   useEffect(() => {
     const fetchGatepasses = async () => {
       try {
-        const response = await axios.get(`https://hostel-hub-bl3q.onrender.com/gatepass/search?search=${search}`);
+        const response = await axios.get(`/gatepass/search?search=${search}`);
         setGatePasses(response.data.gatepasses);
       } catch (error) {
         console.error(error);
@@ -44,7 +74,7 @@ export default function WardenGatepass() {
 
   const handleApprove = async (gatepassId) => {
     try {
-      const response = await axios.put(`https://hostel-hub-bl3q.onrender.com/gatepass/warden/approve/${gatepassId}`);
+      const response = await axios.put(`/gatepass/warden/approve/${gatepassId}`);
       toast.success(response.data.message);
       getData();
     } catch (error) {
@@ -54,7 +84,7 @@ export default function WardenGatepass() {
 
   const handleReject = async (gatepassId) => {
     try {
-      const response = await axios.put(`https://hostel-hub-bl3q.onrender.com/gatepass/warden/reject/${gatepassId}`);
+      const response = await axios.put(`/gatepass/warden/reject/${gatepassId}`);
       toast.success(response.data.message);
       getData();
     } catch (error) {

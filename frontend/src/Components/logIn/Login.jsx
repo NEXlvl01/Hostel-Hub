@@ -27,10 +27,10 @@ export default function Login() {
     try {
       const response = await axios.post(
         "https://hostel-hub-bl3q.onrender.com/user/login",
-        loginData,{withCredentials: true,}
+        loginData
       );
       toast.success(response.data.message);
-      localStorage.setItem("User", JSON.stringify(response.data.user));
+      localStorage.setItem("token", response.data.token);
       setUser(response.data.user);
       setIsAuthenticated(true);
       navigate("/");
@@ -39,6 +39,15 @@ export default function Login() {
       console.log("Error ", error);
     }
   }
+
+  function setAuthorizationHeader() {
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
+  }
+
+  setAuthorizationHeader();
 
   return (
     <div className="flex h-[100vh] w-full justify-center items-center">

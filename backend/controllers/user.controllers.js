@@ -30,15 +30,9 @@ async function userLogin(req, res) {
   try {
     const token = await User.matchPassword(email, pass);
     const user = validateToken(token);
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict", 
-    });
-    
     return res
       .status(200)
-      .json({ message: "User Logged In Successfully", user });
+      .json({ message: "User Logged In Successfully", token, user });
   } catch (error) {
     console.log("Error ", error);
     return res.status(400).json({ message: "Invalid Email Or Password" });
