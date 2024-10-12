@@ -39,8 +39,13 @@ export default function Signup() {
       toast.success(response.data.message);
       navigate("/login");
     } catch (error) {
-      toast.error("User Already Exists");
-      console.log("Error ", error);
+      if (error.response) {
+        console.log("Error response:", error.response.data);
+        toast.error(error.response.data.message || "An error occurred");
+      } else {
+        console.log("Error", error);
+        toast.error("An unexpected error occurred");
+      }
     }
   }
 

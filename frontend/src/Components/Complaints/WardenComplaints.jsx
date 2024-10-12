@@ -6,23 +6,33 @@ import toast from "react-hot-toast";
 axios.defaults.baseURL = 'https://hostel-hub-bl3q.onrender.com';
 
 // Set the Authorization header with the Bearer token
-axios.interceptors.push({
-  request: (config) => {
+axios.interceptors.request.use(
+  (config) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  response: (response) => {
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+axios.interceptors.response.use(
+  (response) => {
+    // If the response status is 401, handle it appropriately
     if (response.status === 401) {
-      // Token has expired, prompt user to log in again
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
     return response;
   },
-});
+  (error) => {
+    // Handle errors
+    return Promise.reject(error);
+  }
+);
 
 export default function WardenComplaints() {
 

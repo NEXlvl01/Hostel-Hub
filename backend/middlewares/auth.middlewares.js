@@ -1,6 +1,10 @@
 const { validateToken } = require("../services/auth.services.js");
 
 function checkForAuthentication(req, res, next) {
+  if (req.url === "/user/signup" || req.url === "/user/login") {
+    return next();
+  }
+
   const token = req.header("Authorization")?.replace("Bearer ", "");
   req.user = null;
   if (!token) {

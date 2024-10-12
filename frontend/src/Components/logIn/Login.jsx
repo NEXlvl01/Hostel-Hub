@@ -1,5 +1,5 @@
 import logo from "../../Images/logos/hostel-hub-logo.png";
-import { useState, useContext } from "react";
+import { useState, useContext,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -47,7 +47,9 @@ export default function Login() {
     }
   }
 
-  setAuthorizationHeader();
+  useEffect(() => {
+    setAuthorizationHeader();
+  }, []);
 
   return (
     <div className="flex h-[100vh] w-full justify-center items-center">

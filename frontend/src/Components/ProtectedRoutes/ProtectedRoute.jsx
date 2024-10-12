@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { AppContext } from '../../Context/AppContext';
+import axios from 'axios';
 const ProtectedRoute = ({ component: Component, allowedRoles }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
