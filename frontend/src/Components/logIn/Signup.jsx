@@ -33,7 +33,7 @@ export default function Signup() {
     event.preventDefault();
     try {
       const response = await axios.post(
-        "https://hostel-hub-bl3q.onrender.com/user/signup",
+        "https://hostel-hub-backend.vercel.app/user/signup",
         signupData
       );
       toast.success(response.data.message);
