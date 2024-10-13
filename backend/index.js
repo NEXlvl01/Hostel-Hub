@@ -20,6 +20,7 @@ app.use(
       "http://localhost:3000",
       "https://hostelhub01.netlify.app",
       "https://hostel-hub-bl3q.onrender.com",
+      "https://hostel-hub-frontend-weld.vercel.app"
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
