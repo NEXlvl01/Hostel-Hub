@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-axios.defaults.baseURL = 'https://hostel-hub-pied.vercel.app/';
+axios.defaults.baseURL = 'https://hostel-hub-backend.vercel.app/';
 
 axios.interceptors.request.use(
   (config) => {
