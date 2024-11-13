@@ -89,7 +89,6 @@ export default function Profile() {
     useEffect(() => {
         getUser();
     }, []);
-
     return (
         <div>
             {loading ? (
@@ -198,7 +197,12 @@ export default function Profile() {
                                             </div>
                                             <div className='h-[1px] w-full bg-neutral-600'></div>
                                         </>)}
-                                        <button className="text-white bg-[#DC851F] py-3 rounded-lg font-semibold hover:bg-[#eea756] transition-all duration-200 w-[150px]" onClick={() => { setEditMode(true) }}>Edit</button>
+                                        <div className='flex gap-3'>
+                                            <button className="text-white bg-[#DC851F] py-3 rounded-lg font-semibold hover:bg-[#eea756] transition-all duration-200 w-[150px]" onClick={() => { setEditMode(true) }}>Edit</button>
+                                            <button className="text-white bg-[#DC851F] py-3 rounded-lg font-semibold hover:bg-[#eea756] transition-all duration-200 w-[170px] px-3" onClick={() => { navigate("/changepassword") }}>
+                                                Change Password
+                                            </button>
+                                        </div>
                                     </div>
                                 )
                             }

@@ -8,6 +8,7 @@ function createToken(user) {
         name : user.fullName,
         profileImage: user.profileImageURL,
         role : user.role,
+        email : user.email,
         hostel : user.hostel,
         rollNo : user.rollNo,
         room : user.room,

@@ -5,6 +5,31 @@ const { uploadOnCloudinary } = require("../services/cloudinary.services.js");
 async function userSignup(req, res) {
   const { fullName, email, phone, role, hostel, room, rollNo, pass } = req.body;
 
+  const errors = [];
+
+  if (pass.length < 8) {
+    errors.push("Password must be at least 8 characters long.");
+  }
+  if (!/[a-z]/.test(pass)) {
+    errors.push("Password must contain at least one lowercase letter.");
+  }
+  if (!/[A-Z]/.test(pass)) {
+    errors.push("Password must contain at least one uppercase letter.");
+  }
+  if (!/\d/.test(pass)) {
+    errors.push("Password must contain at least one number.");
+  }
+  if (!/[@$!%*?&]/.test(pass)) {
+    errors.push("Password must contain at least one special character.");
+  }
+
+  if (errors.length > 0) {
+    return res.status(400).json({
+      message: "Password validation failed",
+      errors: errors,
+    });
+  }
+
   const user = await User.findOne({ email });
 
   if (user) {
@@ -80,10 +105,29 @@ async function profileImageHandler(req, res) {
   }
 }
 
+async function changePasswordHandler(req, res) {
+  try {
+    const { currPass, newPass } = req.body;
+    const email = req.user.email;
+    await User.matchPassword(email, currPass);
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User  not found" });
+    }
+    user.pass = newPass;
+    await user.save();
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ message: error.message });
+  }
+}
+
 module.exports = {
   userSignup,
   userLogin,
   getUser,
   userUpdate,
   profileImageHandler,
+  changePasswordHandler,
 };

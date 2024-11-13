@@ -6,6 +6,7 @@ import Gatepass from "../Gatepass/Gatepass";
 import Profile from "../Profile/Profile";
 import ProtectedRoute from "../ProtectedRoutes/ProtectedRoute";
 import Complaints from "../Complaints/Complaints";
+import ChangePassword from "../Profile/ChangePassword";
 
 const Main = () => {
   return (
@@ -44,6 +45,15 @@ const Main = () => {
           element={
             <ProtectedRoute
               component={Complaints}
+              allowedRoles={["Student", "Warden", "Admin"]}
+            />
+          }
+        />
+        <Route
+          path="/changepassword"
+          element={
+            <ProtectedRoute
+              component={ChangePassword}
               allowedRoles={["Student", "Warden", "Admin"]}
             />
           }

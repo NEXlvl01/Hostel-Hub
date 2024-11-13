@@ -1,4 +1,5 @@
 const Gatepass = require("../models/gatepass.models.js");
+const { sendEmail } = require("../services/nodemailer.services.js");
 
 async function gatePassEntry(req, res) {
   const { name, applyFor, outDate, outTime, inDate, inTime, reason, hostel } =
@@ -85,13 +86,41 @@ async function fetchHostelGatepasses(req, res) {
 async function approveGatepass(req, res) {
   const gatepassId = req.params.gatepassId;
   try {
-    await Gatepass.findByIdAndUpdate(
-      gatepassId,
-      { status: "Approved", approvedOrRejectedBy: req.user.name },
-      { new: true }
+    const gatepass = await Gatepass.findById(gatepassId).populate("createdBy");
+    if (!gatepass) {
+      return res.status(404).json({ error: "Gatepass not found" });
+    }
+
+    gatepass.status = "Approved";
+    gatepass.approvedOrRejectedBy = req.user.name;
+    await gatepass.save();
+
+    const studentEmail = gatepass.createdBy.email;
+
+    const htmlContent = `
+      <p>Dear Student,</p>
+      <p>We are pleased to inform you that your gatepass request has been approved.</p>
+      <p><b>Details:</b></p>
+      <p>Name: ${gatepass.name}</p>
+      <p>Leave Type: ${gatepass.leaveType}</p>
+      <p>Out Date: ${new Date(gatepass.outDate).toLocaleDateString("en-GB")}</p>
+      <p>Out Time: ${gatepass.outTime}</p>
+      <p>Reason: ${gatepass.reason}</p>
+      <p>Thank you for your patience!</p>
+      <p>If you have any further questions or concerns, please feel free to reach out.</p>
+      <p>Best regards,</p>
+      <p><b>${req.user.name}</b></p>
+    `;
+
+    await sendEmail(
+      studentEmail,
+      "Your Gatepass has been Approved",
+      htmlContent
     );
+
     res.status(200).json({ message: "Gatepass approved successfully" });
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: "Failed to approve gatepass" });
   }
 }
@@ -99,13 +128,41 @@ async function approveGatepass(req, res) {
 async function rejectGatepass(req, res) {
   const gatepassId = req.params.gatepassId;
   try {
-    await Gatepass.findByIdAndUpdate(
-      gatepassId,
-      { status: "Rejected", approvedOrRejectedBy: req.user.name },
-      { new: true }
+    const gatepass = await Gatepass.findById(gatepassId).populate("createdBy");
+    if (!gatepass) {
+      return res.status(404).json({ error: "Gatepass not found" });
+    }
+
+    gatepass.status = "Rejected";
+    gatepass.approvedOrRejectedBy = req.user.name;
+    await gatepass.save();
+
+    const studentEmail = gatepass.createdBy.email;
+
+    const htmlContent = `
+      <p>Dear Student,</p>
+      <p>We regret to inform you that your gatepass request has been rejected.</p>
+      <p><b>Details:</b></p>
+      <p>Name: ${gatepass.name}</p>
+      <p>Leave Type: ${gatepass.leaveType}</p>
+      <p>Out Date: ${new Date(gatepass.outDate).toLocaleDateString("en-GB")}</p>
+      <p>Out Time: ${gatepass.outTime}</p>
+      <p>Reason: ${gatepass.reason}</p>
+      <p>If you have further concerns or additional information, please feel free to reach out.</p>
+      <p>Thank you for your understanding.</p>
+      <p>Best regards,</p>
+      <p><b>${req.user.name}</b></p>
+    `;
+
+    await sendEmail(
+      studentEmail,
+      "Your Gatepass has been Rejected",
+      htmlContent
     );
+
     res.status(200).json({ message: "Gatepass rejected successfully" });
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: "Failed to reject gatepass" });
   }
 }

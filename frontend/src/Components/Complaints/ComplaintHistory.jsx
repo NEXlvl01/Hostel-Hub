@@ -34,7 +34,7 @@ export default function ComplaintHistory({ setShowForm }) {
 
         {
           complaints.map((complaint) => (
-            <div className='rounded-lg border-2 border-black p-4 mt-3 py-4 flex justify-between'>
+            <div className='rounded-lg border-2 border-black p-4 mt-3 py-4 flex justify-between shadow-xl'>
               <div className='flex flex-col gap-3'>
                 <div className='flex gap-2 text-xl'>
                   <p className='text-[#DC851F] font-semibold'>Complaint Type - </p>
@@ -48,7 +48,7 @@ export default function ComplaintHistory({ setShowForm }) {
 
               <div>
                 <p className='text-[#DC851F] font-semibold text-xl'>Status</p>
-                <div className={`font-semibold text-xl ${complaint.status === "Pending" ? "text-blue-500" : "text-green-500"}`}>{complaint.status}</div>
+                <div className={`font-semibold text-xl ${complaint.status === "Pending" ? "text-blue-500" : complaint.status === "Resolved" ? "text-green-500" : "text-red-500"}`}>{complaint.status}</div>
               </div>
             </div>
           ))

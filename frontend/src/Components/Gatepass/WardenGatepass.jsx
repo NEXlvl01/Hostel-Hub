@@ -9,6 +9,8 @@ export default function WardenGatepass() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({});
+  const [loadingGatepass, setLoadingGatepass] = useState({});
+
 
   async function getUser() {
     try {
@@ -28,12 +30,12 @@ export default function WardenGatepass() {
     } catch (error) {
       console.log("Error ", error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   }
 
   useEffect(() => {
-    getUser ();
+    getUser();
   }, []);
 
   useEffect(() => {
@@ -43,14 +45,14 @@ export default function WardenGatepass() {
   useEffect(() => {
     const fetchGatepasses = async () => {
       if (search) {
-        setLoading(true); 
+        setLoading(true);
         try {
           const response = await axios.get(`/gatepass/search?search=${search}`);
           setGatePasses(response.data.gatepasses);
         } catch (error) {
           console.error(error);
         } finally {
-          setLoading(false); 
+          setLoading(false);
         }
       }
     };
@@ -59,24 +61,33 @@ export default function WardenGatepass() {
 
 
   const handleApprove = async (gatepassId) => {
+    setLoadingGatepass((prev) => ({ ...prev, [gatepassId]: 'approving' }));
     try {
       const response = await axios.put(`/gatepass/warden/approve/${gatepassId}`);
       toast.success(response.data.message);
       getData();
     } catch (error) {
       console.error(error);
+      toast.error("Failed to approve gatepass");
+    } finally {
+      setLoadingGatepass((prev) => ({ ...prev, [gatepassId]: null }));
     }
   };
 
   const handleReject = async (gatepassId) => {
+    setLoadingGatepass((prev) => ({ ...prev, [gatepassId]: 'rejecting' }));
     try {
       const response = await axios.put(`/gatepass/warden/reject/${gatepassId}`);
       toast.success(response.data.message);
       getData();
     } catch (error) {
       console.error(error);
+      toast.error("Failed to reject gatepass");
+    } finally {
+      setLoadingGatepass((prev) => ({ ...prev, [gatepassId]: null }));
     }
   };
+
 
   return (
     <div className='bg-neutral-100 min-h-[88vh]'>
@@ -162,8 +173,27 @@ export default function WardenGatepass() {
                         <div><span className='text-[#DC851F]'>Reason - </span>{gatepass.reason}</div>
                       </div>
                       <div className='w-[20%] flex flex-col items-center justify-center gap-4'>
-                        <button className='w-full py-2 rounded-md font-semibold bg-[#4caf50] text-white hover:bg-[#37c93c] transition-all duration-200' onClick={() => handleApprove(gatepass._id)}>Approve</button>
-                        <button className='w-full py-2 rounded-md font-semibold bg-[#f44336] text-white hover:bg-[#c22e23] transition-all duration-200' onClick={() => handleReject(gatepass._id)}>Reject</button>
+                        <button
+                          className={`w-full py-2 rounded-md font-semibold text-white transition-all duration-200 ${loadingGatepass[gatepass._id] === 'approving'
+                              ? 'bg-gray-400 cursor-not-allowed'
+                              : 'bg-[#4caf50] hover:bg-[#37c93c]'
+                            }`}
+                          disabled={loadingGatepass[gatepass._id] === 'approving' || loadingGatepass[gatepass._id] === 'rejecting'}
+                          onClick={() => handleApprove(gatepass._id)}
+                        >
+                          {loadingGatepass[gatepass._id] === 'approving' ? 'Approving...' : 'Approve'}
+                        </button>
+
+                        <button
+                          className={`w-full py-2 rounded-md font-semibold text-white transition-all duration-200 ${loadingGatepass[gatepass._id] === 'rejecting'
+                              ? 'bg-gray-400 cursor-not-allowed'
+                              : 'bg-[#f44336] hover:bg-[#c22e23]'
+                            }`}
+                          disabled={loadingGatepass[gatepass._id] === 'approving' || loadingGatepass[gatepass._id] === 'rejecting'}
+                          onClick={() => handleReject(gatepass._id)}
+                        >
+                          {loadingGatepass[gatepass._id] === 'rejecting' ? 'Rejecting...' : 'Reject'}
+                        </button>
                       </div>
                     </div>
                   ))

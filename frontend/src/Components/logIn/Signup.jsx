@@ -33,7 +33,7 @@ export default function Signup() {
     event.preventDefault();
     try {
       const response = await axios.post(
-        "https://hostel-hub-backend.vercel.app/user/signup",
+        "http://localhost:8000/user/signup",
         signupData
       );
       toast.success(response.data.message);
@@ -41,7 +41,14 @@ export default function Signup() {
     } catch (error) {
       if (error.response) {
         console.log("Error response:", error.response.data);
-        toast.error(error.response.data.message || "An error occurred");
+
+        if (error.response.data.errors && Array.isArray(error.response.data.errors)) {
+          error.response.data.errors.forEach((err) => {
+            toast.error(err);
+          });
+        } else {
+          toast.error(error.response.data.message || "An error occurred");
+        }
       } else {
         console.log("Error", error);
         toast.error("An unexpected error occurred");
