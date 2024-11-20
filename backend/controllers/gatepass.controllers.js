@@ -98,6 +98,7 @@ async function approveGatepass(req, res) {
     const studentEmail = gatepass.createdBy.email;
 
     const htmlContent = `
+    <div>
       <p>Dear Student,</p>
       <p>We are pleased to inform you that your gatepass request has been approved.</p>
       <p><b>Details:</b></p>
@@ -110,6 +111,7 @@ async function approveGatepass(req, res) {
       <p>If you have any further questions or concerns, please feel free to reach out.</p>
       <p>Best regards,</p>
       <p><b>${req.user.name}</b></p>
+    </div>
     `;
 
     await sendEmail(

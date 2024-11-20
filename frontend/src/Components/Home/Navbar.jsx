@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../Images/logos/hostel-hub-logo-2.png";
 import { FaUser } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
@@ -38,16 +38,32 @@ export default function Navbar() {
             Home
           </button>
         </NavLink>
-        <NavLink to="/gatepass" className={({ isActive }) => (isActive ? 'active' : 'nav-link')}>
-          <button className="font-semibold cursor-pointer hover:text-[#DC851F] transition-all duration-300">
-            Gatepass
-          </button>
-        </NavLink>
-        <NavLink to="/complaints" className={({ isActive }) => (isActive ? 'active' : 'nav-link')}>
-          <button className="font-semibold cursor-pointer hover:text-[#DC851F] transition-all duration-300">
-            Complaints
-          </button>
-        </NavLink>
+        {
+          user?.role !== "Admin" ? (
+            <div className="flex gap-10 justify-center items-center text-[#343330]">
+              <NavLink to="/gatepass" className={({ isActive }) => (isActive ? 'active' : 'nav-link')}>
+                <button className="font-semibold cursor-pointer hover:text-[#DC851F] transition-all duration-300">
+                  Gatepass
+                </button>
+              </NavLink>
+              <NavLink to="/complaints" className={({ isActive }) => (isActive ? 'active' : 'nav-link')}>
+                <button className="font-semibold cursor-pointer hover:text-[#DC851F] transition-all duration-300">
+                  Complaints
+                </button>
+              </NavLink></div>) : (<div className="flex gap-10 justify-center items-center text-[#343330]">
+                <NavLink to="/hosteldetails" className={({ isActive }) => (isActive ? 'active' : 'nav-link')}>
+                  <button className="font-semibold cursor-pointer hover:text-[#DC851F] transition-all duration-300">
+                    Hostel Details
+                  </button>
+                </NavLink>
+                <NavLink to="/hostelstatistics" className={({ isActive }) => (isActive ? 'active' : 'nav-link')}>
+                  <button className="font-semibold cursor-pointer hover:text-[#DC851F] transition-all duration-300">
+                    Hostel Statistics
+                  </button>
+                </NavLink>
+              </div>)
+        }
+
         <NavLink to="/profile">
           <div>
             <button class="relative inline-block group">

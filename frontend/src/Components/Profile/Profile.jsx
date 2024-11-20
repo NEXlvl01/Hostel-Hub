@@ -78,7 +78,7 @@ export default function Profile() {
                     localStorage.removeItem('token');
                     navigate("/login");
                     toast.dismiss(t.id);
-                    toast.success("User   Logged Out");
+                    toast.success("User Logged Out");
                 }} className='text-white bg-[#DC851F] py-2 rounded-lg font-semibold hover:bg-[#eea756] transition-all duration-200 w-[100px]'>
                     Log Out
                 </button>
@@ -182,7 +182,7 @@ export default function Profile() {
                                         <div className='h-[1px] w-full bg-neutral-600'></div>
                                         <div className='flex gap-3 items-center text-[#343330]'>
                                             <div className='w-[15%] text-xl text-[#DC851F] font font-semibold'>Hostel</div>
-                                            <div className='h-[50px] px-2 w-[85%] font-semibold flex items-center text-xl'>{user.hostel}</div>
+                                            <div className='h-[50px] px-2 w-[85%] font-semibold flex items-center text-xl'>{user?.hostel ? (user.hostel) : (<div>---</div>)}</div>
                                         </div>
                                         <div className='h-[1px] w-full bg-neutral-600'></div>
                                         {user.role === "Student" && (<>

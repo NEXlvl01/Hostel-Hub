@@ -1,6 +1,7 @@
 const User = require("../models/user.models.js");
 const { validateToken } = require("../services/auth.services.js");
 const { uploadOnCloudinary } = require("../services/cloudinary.services.js");
+const { sendEmail } = require("../services/nodemailer.services.js");
 
 async function userSignup(req, res) {
   const { fullName, email, phone, role, hostel, room, rollNo, pass } = req.body;
@@ -46,6 +47,24 @@ async function userSignup(req, res) {
     rollNo,
     pass,
   });
+
+  const htmlContent = `
+        <div>
+          <p>Dear ${fullName},</p>
+          <p>Welcome to <b>Hostel Hub</b>! We are thrilled to have you onboard.</p>
+          <p>Here are your details:</p>
+          <ul>
+            <li><b>Role:</b> ${role}</li>
+            <li><b>Hostel:</b> ${hostel}</li>
+          </ul>
+          <p>We hope you have a seamless experience managing your hostel activities using Hostel Hub.</p>
+          <p>If you have any questions, feel free to reach out to our support team.</p>
+          <p>Best regards,</p>
+          <p><b>The Hostel Hub Team</b></p>
+        </div>
+      `;
+
+  await sendEmail(email, "Welcome to Hostel Hub!", htmlContent);
 
   return res.status(201).json({ message: "Account Created Successfully" });
 }
@@ -123,6 +142,90 @@ async function changePasswordHandler(req, res) {
   }
 }
 
+async function getHostelsHandler(req, res) {
+  try {
+    const hostels = await User.aggregate([
+      {
+        $match: {
+          hostel: { $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: "$hostel",
+          numberOfStudents: {
+            $sum: { $cond: [{ $eq: ["$role", "Student"] }, 1, 0] },
+          },
+          numberOfWardens: {
+            $sum: { $cond: [{ $eq: ["$role", "Warden"] }, 1, 0] },
+          },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+    ]);
+
+    res.json(hostels);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function getStudentsHandler(req, res) {
+  try {
+    const hostelName = req.params.hostel;
+    const students = await User.find(
+      { hostel: hostelName, role: "Student" },
+      { pass: 0, salt: 0 }
+    );
+
+    res.status(200).json({ students });
+  } catch (error) {
+    console.error("Error fetching students: ", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function getWardensHandler(req, res) {
+  try {
+    const hostelName = req.params.hostel;
+    const wardens = await User.find(
+      { hostel: hostelName, role: "Warden" },
+      { pass: 0, salt: 0 }
+    );
+    res.status(200).json({ wardens });
+  } catch (error) {
+    console.error("Error fetching wardens: ", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function removeUserHandler(req, res) {
+  try {
+    const userID = req.params.userID;
+
+    if (!userID) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const result = await User.findByIdAndDelete(userID);
+
+    if (!result) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "User deleted successfully", user: result });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
 module.exports = {
   userSignup,
   userLogin,
@@ -130,4 +233,8 @@ module.exports = {
   userUpdate,
   profileImageHandler,
   changePasswordHandler,
+  getHostelsHandler,
+  getStudentsHandler,
+  getWardensHandler,
+  removeUserHandler,
 };

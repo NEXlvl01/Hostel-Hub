@@ -10,7 +10,7 @@ const ProtectedRoute = ({ component: Component, allowedRoles }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('/user/getUser  ');
+        const response = await axios.get('/user/getUser');
         setUser(response.data.user);
       } catch (error) {
         console.log("Error fetching user:", error);
@@ -27,7 +27,7 @@ const ProtectedRoute = ({ component: Component, allowedRoles }) => {
     return <Navigate to="/login" />;
   }
 
-  return <Component />;
+  return <Component/>;
 };
 
 export default ProtectedRoute;

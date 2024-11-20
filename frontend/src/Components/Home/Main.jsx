@@ -7,6 +7,9 @@ import Profile from "../Profile/Profile";
 import ProtectedRoute from "../ProtectedRoutes/ProtectedRoute";
 import Complaints from "../Complaints/Complaints";
 import ChangePassword from "../Profile/ChangePassword";
+import HostelDetails from "../Admin/HostelDetails";
+import HostelListing from "../Admin/HostelListing";
+import HostelStatistics from "../Admin/HostelStatistics";
 
 const Main = () => {
   return (
@@ -27,7 +30,7 @@ const Main = () => {
           element={
             <ProtectedRoute
               component={Gatepass}
-              allowedRoles={["Student", "Warden", "Admin"]}
+              allowedRoles={["Student", "Warden"]}
             />
           }
         />
@@ -45,7 +48,7 @@ const Main = () => {
           element={
             <ProtectedRoute
               component={Complaints}
-              allowedRoles={["Student", "Warden", "Admin"]}
+              allowedRoles={["Student", "Warden"]}
             />
           }
         />
@@ -55,6 +58,33 @@ const Main = () => {
             <ProtectedRoute
               component={ChangePassword}
               allowedRoles={["Student", "Warden", "Admin"]}
+            />
+          }
+        />
+        <Route
+          path="/hosteldetails"
+          element={
+            <ProtectedRoute
+              component={HostelDetails}
+              allowedRoles={["Admin"]}
+            />
+          }
+        />
+        <Route
+          path="/hostel/:hostelID"
+          element={
+            <ProtectedRoute
+              component={HostelListing}
+              allowedRoles={["Admin"]}
+            />
+          }
+        />
+        <Route
+          path="/hostelstatistics"
+          element={
+            <ProtectedRoute
+              component={HostelStatistics}
+              allowedRoles={["Admin"]}
             />
           }
         />

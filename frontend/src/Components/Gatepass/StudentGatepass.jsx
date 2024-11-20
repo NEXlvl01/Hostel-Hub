@@ -82,7 +82,14 @@ export default function StudentGatepass() {
   async function getData() {
     try {
       const response = await axios.get('/gatepass/all');
-      setGatepasses(response.data.gatepasses);
+      const sortedGatepasses = response.data.gatepasses.sort((a, b) => {
+
+        if (a.status === "Pending" && b.status !== "Pending") return -1;
+        if (a.status !== "Pending" && b.status === "Pending") return 1;
+
+        return new Date(b.outDate) - new Date(a.outDate);
+      });
+      setGatepasses(sortedGatepasses);
     } catch (error) {
       console.log("Error ", error);
     }
