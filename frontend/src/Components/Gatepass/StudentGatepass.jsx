@@ -155,7 +155,7 @@ export default function StudentGatepass() {
       <div className="w-full flex justify-center items-center py-4 flex-col gap-3">
         <div className="w-[80%] rounded-2xl shadow-2xl border-2 bg-white py-3 px-4">
           <div>
-            <p className="text-3xl text-[#DC851F]">
+            <p className="sm:text-3xl text-[#DC851F] text-xl">
               Hi,{" "}
               <span className="text-[#343330] font-semibold">{user?.fullName}</span>
             </p>
@@ -173,8 +173,8 @@ export default function StudentGatepass() {
         <div className="w-[80%] rounded-2xl shadow-2xl border-2 bg-white py-3 px-4">
           {applyForm ? (
             <div className="flex flex-col gap-7 py-2">
-              <div className="text-[#343330] flex items-center justify-between">
-                <p className="font-semibold text-xl">Apply Gatepass</p>
+              <div className="text-[#343330] flex items-center justify-between sm:flex-row flex-col">
+                <p className="font-semibold sm:text-xl">Apply Gatepass</p>
                 <button
                   className="text-white bg-[#DC851F] py-2 px-4 rounded-lg hover:bg-[#eea756] transition-all duration-200"
                   onClick={() => {
@@ -213,7 +213,7 @@ export default function StudentGatepass() {
                   </select>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 lg:flex-row flex-col">
                   <div className="flex gap-2 flex-col">
                     <label
                       htmlFor="outDate"
@@ -225,7 +225,7 @@ export default function StudentGatepass() {
                       type="date"
                       id="outDate"
                       name="outDate"
-                      className="w-[300px] h-[40px] border-2 border-black rounded-md p-2"
+                      className="lg:w-[300px] w-[100%] h-[40px] border-2 border-black rounded-md p-2"
                       onChange={changeHandler}
                       value={gatePassData.outDate}
                       min={formatDateToYYYYMMDD(currentDate)}
@@ -242,7 +242,7 @@ export default function StudentGatepass() {
                       type="text"
                       id="outTime"
                       name="outTime"
-                      className="w-[300px] h-[40px] border-2 border-black rounded-md p-2"
+                      className="lg:w-[300px] w-[100%] h-[40px] border-2 border-black rounded-md p-2"
                       placeholder="Enter Out Time Here"
                       onChange={changeHandler}
                       value={gatePassData.outTime}
@@ -250,7 +250,7 @@ export default function StudentGatepass() {
                   </div>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 lg:flex-row flex-col">
                   {gatePassData.applyFor === "Night Out" ? (
                     <div className="flex gap-2 flex-col">
                       <label
@@ -263,7 +263,7 @@ export default function StudentGatepass() {
                         type="date"
                         id="inDate"
                         name="inDate"
-                        className="w-[300px] h-[40px] border-2 border-black rounded-md p-2"
+                        className="lg:w-[300px] w-[100%] h-[40px] border-2 border-black rounded-md p-2"
                         onChange={changeHandler}
                         value={gatePassData.inDate}
                         min={gatePassData.outDate ? addOneDay(gatePassData.outDate) : ""}
@@ -281,14 +281,14 @@ export default function StudentGatepass() {
                       type="text"
                       id="inTime"
                       name="inTime"
-                      className="w-[300px] h-[40px] border-2 border-black rounded-md p-2"
+                      className="lg:w-[300px] w-[100%] h-[40px] border-2 border-black rounded-md p-2"
                       placeholder="Enter Out Time Here"
                       onChange={changeHandler}
                       value={gatePassData.inTime}
                     />
                   </div>
                 </div>
-                <div className="flex gap-6 items-end">
+                <div className="flex gap-6 lg:flex-row flex-col lg:items-end">
                   <div className="flex flex-col gap-2">
                     <label
                       htmlFor="reason"
@@ -301,7 +301,7 @@ export default function StudentGatepass() {
                       id="reason"
                       name="reason"
                       placeholder="Enter Reason Here"
-                      className="w-[300px] h-[40px] border-2 border-black rounded-md p-2"
+                      className="lg:w-[300px] w-[100%] h-[40px] border-2 border-black rounded-md p-2"
                       onChange={changeHandler}
                       value={gatePassData.reason}
                     />
@@ -326,8 +326,8 @@ export default function StudentGatepass() {
             </div>
           ) : (
             <div className="py-2 flex flex-col gap-7">
-              <div className="text-[#343330] flex items-center justify-between">
-                <p className="font-semibold text-xl">Gatepass History</p>
+              <div className="text-[#343330] flex items-center justify-between sm:flex-row flex-col">
+                <p className="font-semibold sm:text-xl">Gatepass History</p>
                 <button
                   className="text-white bg-[#DC851F] py-2 px-4 rounded-lg hover:bg-[#eea756] transition-all duration-200"
                   onClick={() => {
@@ -339,8 +339,8 @@ export default function StudentGatepass() {
                 </button>
               </div>
               <div className="h-[1px] w-full bg-neutral-400"></div>
-              <div>
-                <table className="w-full" border="1">
+              <div className="overflow-x-scroll lg:overflow-x-visible">
+                <table className="w-full min-w-[1100px]" border="1">
                   <thead>
                     <tr className="flex mb-4">
                       <th className="flex-1 text-center text-xl text-[#DC851F]">

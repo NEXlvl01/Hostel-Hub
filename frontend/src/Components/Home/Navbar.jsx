@@ -3,6 +3,7 @@ import logo from "../../Images/logos/hostel-hub-logo-2.png";
 import { FaUser } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import axios from '../../axiosConfig.js';
+import { IoMdMenu } from "react-icons/io";
 import "./Navbar.css";
 
 export default function Navbar() {
@@ -11,7 +12,7 @@ export default function Navbar() {
 
   async function getUser() {
     try {
-      const response = await axios.get('/user/getUser ');
+      const response = await axios.get('/user/getUser');
       setUser(response.data.user);
     } catch (error) {
       console.log("Error ", error);
@@ -29,10 +30,14 @@ export default function Navbar() {
   return (
     <div className="flex justify-around h-[12vh] items-center min-h-[100px]">
       <div>
-        <img src={logo} alt="" className="w-[300px] h-[65px] cursor-pointer" />
+        <img src={logo} alt="" className="md:w-[300px] cursor-pointer w-[200px]" />
       </div>
 
-      <div className="flex gap-10 justify-center items-center text-[#343330]">
+      <div className="md:hidden"> 
+        <IoMdMenu className="text-3xl text-[#343330]"/>
+      </div>
+
+      <div id = "optionsDiv" className="md:flex gap-10 justify-center items-center text-[#343330] hidden">
         <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : 'nav-link')}>
           <button className="font-semibold cursor-pointer hover:text-[#DC851F] transition-all duration-300">
             Home

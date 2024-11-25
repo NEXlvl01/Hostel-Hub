@@ -26,7 +26,7 @@ export default function Login() {
     event.preventDefault();
     try {
       const response = await axios.post(
-        "https://hostel-hub-backend.vercel.app/user/login",
+        "http://localhost:8000/user/login",
         loginData
       );
       toast.success(response.data.message);
